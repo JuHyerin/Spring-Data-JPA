@@ -20,24 +20,24 @@ import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
-@EnableSwagger2 //Application.java에 적용해도 됨
+@EnableSwagger2 //Application.java�뿉 �쟻�슜�빐�룄 �맖
 @Configuration
 public class SwaggerConfig {
-    //Arrays클래스는 메서드가 모두 static method
-    //Arrays.asList(배열): ArrayList
-    //일반배열->ArrayList
+    //Arrays�겢�옒�뒪�뒗 硫붿꽌�뱶媛� 紐⑤몢 static method
+    //Arrays.asList(諛곗뿴): ArrayList
+    //�씪諛섎같�뿴->ArrayList
     private List<ResponseMessage> responseMessages = Arrays.asList( 
                                                         new ResponseMessageBuilder()
                                                         .code(200)
-                                                        .message("성공!")
+                                                        .message("�꽦怨�!")
                                                         .build(),
                                                         new ResponseMessageBuilder()
                                                         .code(404)
-                                                        .message("없음!")
+                                                        .message("�뾾�쓬!")
                                                         .build(),
                                                         new ResponseMessageBuilder()
                                                         .code(500)
-                                                        .message("실패!")
+                                                        .message("�떎�뙣!")
                                                         .build()
                                                     );
     @Bean(name = "testapi")
@@ -90,20 +90,20 @@ public class SwaggerConfig {
     }
 
 
-    private ApiInfo testApiInfo(){ //Docket객체 생성시 매개변수로 사용
+    private ApiInfo testApiInfo(){ 
         return new ApiInfoBuilder()
         .title("Swagger Test")
         .version("test")
-        .description("테스트용 스웨거 커스텀")
+        .description("�뀒�뒪�듃�슜 �뒪�썾嫄� 而ㅼ뒪��")
         .contact(new Contact("JuHyerin","https://github.com/JuHyerin","1692075@hansung.ac.kr"))
         .build();
     }   
     
-    private ApiInfo boardApiInfo(){ //Docket객체 생성시 매개변수로 사용
+    private ApiInfo boardApiInfo(){ //Docket媛앹껜 �깮�꽦�떆 留ㅺ컻蹂��닔濡� �궗�슜
         return new ApiInfoBuilder()
         .title("Board Project")
         .version("v1")
-        .description("게시판 프로젝트 api")
+        .description("寃뚯떆�뙋 �봽濡쒖젥�듃 api")
         .contact(new Contact("JuHyerin","https://github.com/JuHyerin","1692075@hansung.ac.kr"))
         .build();
     }

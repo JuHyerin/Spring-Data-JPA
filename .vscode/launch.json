@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-InniboardApplication<inniboard>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "console": "internalConsole",
+            "mainClass": "com.innilabs.inniboard.InniboardApplication",
+            "projectName": "inniboard",
+            "args": ""
+        }
+    ]
+}

@@ -12,13 +12,16 @@ import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.annotation.PostConstruct;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.innilabs.inniboard.dto.Post;
-import com.innilabs.inniboard.repository.PostDao;
+import com.innilabs.board.entity.Post;
+import com.innilabs.inniboard.repository.PostRepository;
+import com.innilabs.inniboard.service.PostService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.DependsOn;
@@ -30,74 +33,33 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-@DependsOn("testapi")//bean 생성 순서 조절
+@DependsOn("testapi")
 @RestController
-//@Api(value="/posts", description = "게시물 자원을 이용한 api") //Controller 단위로 api 메타데이터 명시
 @RequestMapping("/api/board")
 public class PostController {
     ObjectMapper om;
     @PostConstruct
     void init(){
-        //PostController가 생성된 후 호출되는 function -> Component를 초기화해줄 수 있음
-        //ObjectMapper(ex:Json<->Object)
-        om = new ObjectMapper(); //한번만 만들고 싶으니까!
+        om = new ObjectMapper(); 
     }
 
     @Autowired
-    PostDao postDao;
+    private PostService postService;
+    private PostRepository postRepository;
      
-    @ApiOperation(value = "Get All Posts", notes = "모든 게시물 조회") //하나의 REST API 요청 URL에 맵핑됨
+    @ApiOperation(value = "Get All Posts", notes = "모든 게시물 조회") 
     @GetMapping(value="/posts")
-    public ResponseEntity<Map<Integer,Post>> getAllPosts(){
-        Map<Integer,Post> postList = postDao.getAllPosts();
-        if(postList.isEmpty()){
-            return new ResponseEntity<Map<Integer,Post>>(HttpStatus.NOT_FOUND);
-        }
-        return new ResponseEntity<Map<Integer,Post>>(postList,HttpStatus.OK);
+    public ResponseEntity<?> getAllPost(){ 
+    	List<Post> postList = postService.getAllPost();
+    	return new ResponseEntity<List<Post>>(postList, HttpStatus.OK);
+
     }
 
-    //@ApiOperation(value = "Get Post By PostId in path", notes = "path에 게시물id로 게시물 조회")
+    
     @GetMapping(value = "/posts/{id}")
-    public ResponseEntity<Post> getPostByIdInPath(@ApiParam(value = "조회할 게시물 아이디", defaultValue = "1")@PathVariable(value = "id", required = true) int id){
-        Post post = postDao.getPostById(id);
-        if(post == null){
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        return new ResponseEntity<Post>(post, HttpStatus.OK);
-    }
-
-    @ApiOperation(value = "Get Post By PostId in query", notes = "query에 게시물id로 게시물 조회")
-    @ApiImplicitParams({
-        @ApiImplicitParam(name="id", value = "조회할 게시물 아이디", dataType = "int", defaultValue = "1")
-    })
-    @PostMapping(value = "/posts/query")
-    public ResponseEntity<Post> getPostByIdInQuery(int id){
-        Post post = postDao.getPostById(id);
-        if(post == null){
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        return new ResponseEntity<Post>(post, HttpStatus.OK);
-    }
-
-    @ApiOperation(value = "Get Post by postId or Title in query", notes = "query에 게시물 아이디나 제목으로 게시물 조회")
-    @ApiImplicitParams({
-        @ApiImplicitParam(name="option", value="검색조건", required = true, defaultValue = "id"),
-        @ApiImplicitParam(name="word", value="검색단어", dataType = "string", defaultValue = "1")
-    })
-    @GetMapping(value = "/posts/search")
-    public ResponseEntity<Post> getPostByIdInQuery(String option, String word){
-        Post post = null;
-       if(option.equals("id")){
-            post = postDao.getPostById(Integer.parseInt(word));
-            
-        }else if(option.equals("title")){
-            post = postDao.getPostByTitle(word);
-        }
-
-        if(post == null){
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        return new ResponseEntity<Post>(post, HttpStatus.OK);
+    public ResponseEntity<?> getPostById(@ApiParam(value = "조회할 post id", defaultValue = "1")@PathVariable(value = "id", required = true) int id){
+        Post post = postService.getPostById(id);
+    	return new ResponseEntity<Post>(post, HttpStatus.OK);
     }
 
    
@@ -110,33 +72,25 @@ public class PostController {
     })
     @PostMapping(value = "/posts")
     public ResponseEntity<Post> createPost(@ApiParam(value = "등록할 게시물") @RequestBody Post post){
-        Post createdPost = postDao.createPost(post);
-        if(createdPost==null){
-            return new ResponseEntity<>(HttpStatus.METHOD_NOT_ALLOWED);//postid중복
-        }
+    	Post createdPost = postService.createPost(post);
         return new ResponseEntity<Post>(createdPost, HttpStatus.CREATED);
     }
 
     @ApiOperation(value = "Update Post", notes = "게시물 수정")
     @PutMapping(value = "/posts")
-    public ResponseEntity<Post> updatePost(@ApiParam(value = "수정할 게시물 아이디", required = true, defaultValue = "1") @RequestParam int id, 
-                                        @ApiParam(value = "수정할 내용") @RequestBody Post post){  
-        if(postDao.getPostById(id)==null){
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);//postid없음
-
-        }                
-        Post updatedPost = postDao.updatePostAtId(id, post);              
+    public ResponseEntity<Post> editPost(@ApiParam(value = "수정할 게시물의 post id", required = true, defaultValue = "1") @RequestParam int id, 
+                                        @ApiParam(value = "수정된 게시물") @RequestBody Post post){  
+                      
+        Post updatedPost = postService.editPost(post);     
         return new ResponseEntity<Post>(updatedPost, HttpStatus.OK);
     }
 
-    @ApiOperation(value = "Delete Post by PostID", notes = "게시물 삭제")
+    @ApiOperation(value = "Delete Post by PostID", notes = "寃뚯떆臾� �궘�젣")
     @DeleteMapping(value = "/posts/{id}")
-    public ResponseEntity<Post> deletePostById(@ApiParam(value="삭제할 게시물 아이디", defaultValue = "1")@PathVariable int id){
+    public ResponseEntity deletePostById(@ApiParam(value="�궘�젣�븷 寃뚯떆臾� �븘�씠�뵒", defaultValue = "1")@PathVariable int id){
     
-        Post deletedPost = postDao.deletePostById(id);
-        if(deletedPost == null){
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        return new ResponseEntity<Post>(deletedPost, HttpStatus.OK);
+        postService.deletePostById(id);
+        
+        return new ResponseEntity(HttpStatus.OK);
     }
 }

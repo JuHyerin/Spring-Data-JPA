@@ -1,22 +1,25 @@
 package com.innilabs.inniboard.dto;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
 
-/*@Getter
-@Setter
-@ToString
-@NoArgsConstructor
-@ApiModel*/
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+
+import lombok.Builder;
+import lombok.Data;
+
+@Entity(name = "user")
 @Data
+@Builder
 public class User {
-    
+	
+	@Id
+	@Column(name = "id")
     private String userId;
+	
+	@Column(name = "pwd")
     private String password;
+	
+	@Column
     private String name;
 }
