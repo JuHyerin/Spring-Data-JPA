@@ -35,9 +35,11 @@ public class PostService {
 		Post reqEntity = new Post();
 		reqEntity.setTitle(reqPost.getTitle());
 		reqEntity.setContents(reqPost.getContents());
-		//User existUser = userRepo.findAll().get(0);
-		//System.out.println("user:"+ existUser);
-		//reqEntity.setWriter(existUser);
+
+		User existUser = userRepo.findAll().get(0);
+		System.out.println("user:"+ existUser);
+		reqEntity.setWriter(existUser);
+
 		reqEntity.setCreatedAt(Timestamp.valueOf(LocalDateTime.now()));
 		reqEntity.setUpdatedAt(null);
 		reqEntity.setDeletedAt(null);
@@ -55,7 +57,9 @@ public class PostService {
 		reqEntity.setTitle(reqPost.getTitle());
 		reqEntity.setContents(reqPost.getContents());
 		reqEntity.setUpdatedAt(Timestamp.valueOf(LocalDateTime.now()));
-		//reqEntity.setWriter(new User("id000", "000", "혜린"));
+
+		reqEntity.setWriter(new User("id000", "000", "혜린"));
+		
 		Post updatedPost = postRepo.saveAndFlush(reqEntity);
 		return updatedPost;
 	}
