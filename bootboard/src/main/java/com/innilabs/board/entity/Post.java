@@ -3,8 +3,10 @@ package com.innilabs.board.entity;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -12,13 +14,14 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import lombok.AccessLevel;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "post")
 @Data
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PUBLIC)
 public class Post implements Serializable{
     
 	private static final long serialVersionUID = 3351906259819685774L;
@@ -31,7 +34,7 @@ public class Post implements Serializable{
 	@Column
 	private String title;
 	
-	@ManyToOne(targetEntity = User.class)
+	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, targetEntity = User.class)
 	@JoinColumn(name = "writer")
 	private User writer;
 	
@@ -49,6 +52,5 @@ public class Post implements Serializable{
 	
 	@Column(name = "is_deleted")
 	private boolean isDeleted;
-
 	
 }
