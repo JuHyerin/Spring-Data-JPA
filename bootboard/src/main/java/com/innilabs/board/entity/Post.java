@@ -34,7 +34,7 @@ public class Post implements Serializable{
 	@Column
 	private String title;
 	
-	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, targetEntity = User.class)
+	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, /*targetEntity = User.class*/)
 	@JoinColumn(name = "writer")
 	private User writer;
 	
